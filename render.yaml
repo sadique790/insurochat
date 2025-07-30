@@ -13,3 +13,4 @@ services:
         value: production
       - key: SECRET_KEY
         value: yourSecretKeyHere
+        startCommand: gunicorn main:app --bind 0.0.0.0:$PORT
