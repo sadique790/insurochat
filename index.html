@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Insurance Chatbot</title>
+</head>
+<body>
+    <h2>🛡️ Insurance Chatbot</h2>
+    <div id="chatbox"></div>
+    <input type="text" id="userInput" placeholder="Ask your insurance question..." />
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        function sendMessage() {
+            const input = document.getElementById("userInput").value;
+            fetch("/get", {
+                method: "POST",
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message: input})
+            })
+            .then(res => res.json())
+            .then(data => {
+                const chatbox = document.getElementById("chatbox");
+                chatbox.innerHTML += `<p><strong>You:</strong> ${input}</p>`;
+                chatbox.innerHTML += `<p><strong>Bot:</strong> ${data.reply}</p>`;
+                document.getElementById("userInput").value = "";
+            });
+        }
+    </script>
+</body>
+</html>
