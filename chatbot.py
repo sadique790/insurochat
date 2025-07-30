@@ -11,7 +11,7 @@ def get_response(user_input):
         return "Car insurance protects your vehicle against accidents, theft, and damage."
     elif "work" in user_input:
         return "life insurance provides financial support to your family in case something happens to you."
-    elif "Saira husband" in user_input or "vehicle" in user_input:
+    elif "Saira husband" in user_input or "saira" in user_input:
         return "saira's husband is sadique"
     else:
         return "I can help with health, car, or life insurance. What would you like to know more about?"
