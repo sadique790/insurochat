@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: insurochat
+    env: python
+    plan: free
+    region: oregon
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    branch: main
+    repo: https://github.com/sadique790/insurochat.git
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        value: yourSecretKeyHere
