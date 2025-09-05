@@ -1,88 +1,153 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Insurance Chatbot</title>
+    <title>Chatbot 🛡️</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: url("https://www.pngall.com/wp-content/uploads/2016/06/Insurance.png") no-repeat center center fixed;
-        background-size: cover;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        }
-
-        h2 {
-            background-color: #00796b;
-            color: #ffffff;
-            padding: 20px;
-            width: 100%;
-            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
-            box-shadow: 0px 2px 4px rgba(0,0,0,0.1);
         }
-
-        #chatbox {
+        .container {
             width: 90%;
             max-width: 600px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            height: 80vh;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.2em;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+        #chatbox {
+            flex-grow: 1;
             padding: 20px;
-            margin-top: 20px;
             overflow-y: auto;
-            max-height: 400px;
+            display: flex;
+            flex-direction: column;
         }
-
-        input[type="text"] {
-            width: 70%;
-            padding: 10px;
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-end;
+            word-wrap: break-word;
+        }
+        .message.user {
+            justify-content: flex-end;
+        }
+        .message.bot {
+            justify-content: flex-start;
+        }
+        .message-content {
+            padding: 10px 15px;
+            border-radius: 18px;
+            max-width: 70%;
+            line-height: 1.4;
+        }
+        .message.user .message-content {
+            background-color: #007bff;
+            color: white;
+        }
+        .message.bot .message-content {
+            background-color: #e2eafc;
+            color: #333;
+        }
+        .input-container {
+            display: flex;
+            padding: 15px;
+            background-color: #f7f7f7;
+            border-top: 1px solid #e0e0e0;
+        }
+        #userInput {
+            flex-grow: 1;
+            padding: 10px 15px;
             border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-top: 15px;
-            font-size: 16px;
+            border-radius: 20px;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.3s;
         }
-
+        #userInput:focus {
+            border-color: #007bff;
+        }
         button {
             padding: 10px 20px;
-            margin-top: 15px;
             margin-left: 10px;
-            background-color: #00796b;
+            background-color: #007bff;
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 20px;
             cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 1em;
         }
-
         button:hover {
-            background-color: #004d40;
+            background-color: #0056b3;
         }
-
-        p {
-            margin: 10px 0;
-            font-size: 16px;
+        .loading-dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            margin: 0 2px;
+            background-color: #333;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
         }
-
-        strong {
-            color: #333;
+        .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
         }
     </style>
 </head>
 <body>
-    <h2>🛡️ Welcome to Sadique's  Insurance Chatbot</h2>
-    <div id="chatbox"></div>
-    <input type="text" id="userInput" placeholder="Ask your insurance question..." />
-    <button onclick="sendMessage()">Send</button>
+    <div class="container">
+        <header>🛡️ Insurance Chatbot</header>
+        <div id="chatbox"></div>
+        <div class="input-container">
+            <input type="text" id="userInput" placeholder="Ask your insurance question..." onkeypress="handleKeyPress(event)" />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
 
     <script>
         function sendMessage() {
-            const input = document.getElementById("userInput").value;
-            if (!input.trim()) return;
+            const userInput = document.getElementById("userInput");
+            const chatbox = document.getElementById("chatbox");
+            const input = userInput.value.trim();
+
+            if (input === "") return;
+
+            // Add user message to the chatbox
+            const userMessageDiv = document.createElement("div");
+            userMessageDiv.className = "message user";
+            userMessageDiv.innerHTML = `<div class="message-content">${input}</div>`;
+            chatbox.appendChild(userMessageDiv);
+
+            // Add loading indicator
+            const loadingDiv = document.createElement("div");
+            loadingDiv.className = "message bot loading";
+            loadingDiv.innerHTML = `<div class="message-content loading-dots"><span></span><span></span><span></span></div>`;
+            chatbox.appendChild(loadingDiv);
+            
+            // Scroll to the bottom
+            chatbox.scrollTop = chatbox.scrollHeight;
+
+            userInput.value = "";
 
             fetch("/get", {
                 method: "POST",
@@ -91,12 +156,35 @@
             })
             .then(res => res.json())
             .then(data => {
-                const chatbox = document.getElementById("chatbox");
-                chatbox.innerHTML += `<p><strong>You:</strong> ${input}</p>`;
-                chatbox.innerHTML += `<p><strong>Bot:</strong> ${data.reply}</p>`;
+                // Remove loading indicator
+                chatbox.removeChild(loadingDiv);
+
+                // Add bot reply to the chatbox
+                const botMessageDiv = document.createElement("div");
+                botMessageDiv.className = "message bot";
+                botMessageDiv.innerHTML = `<div class="message-content">${data.reply}</div>`;
+                chatbox.appendChild(botMessageDiv);
+
+                // Scroll to the bottom
                 chatbox.scrollTop = chatbox.scrollHeight;
-                document.getElementById("userInput").value = "";
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                // Remove loading indicator and show error message
+                chatbox.removeChild(loadingDiv);
+                const errorDiv = document.createElement("div");
+                errorDiv.className = "message bot";
+                errorDiv.innerHTML = `<div class="message-content">Sorry, something went wrong. Please try again later.</div>`;
+                chatbox.appendChild(errorDiv);
+                chatbox.scrollTop = chatbox.scrollHeight;
             });
+        }
+
+        // Allow sending message with Enter key
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
         }
     </script>
 </body>
