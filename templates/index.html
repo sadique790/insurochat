@@ -1,181 +1,266 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Insurance Chatbot</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Dynamic Chatbot 🤖</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             background-image: url('https://img.freepik.com/premium-photo/chatbot-robot-concept-background_1279573-15211.jpg?semt=ais_hybrid');
-            background-repeat: no-repeat;
-            background-position: center;
             background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: flex-start; /* Changed to align the container to the left */
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            transition: background-color 0.5s;
+            padding-left: 20px; /* Adds a little space from the left edge */
+        }
+        .container {
+            width: 90%;
+            max-width: 600px;
+            height: 80vh;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: background-color 0.5s, box-shadow 0.5s;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.4em;
+            font-weight: bold;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .chatbot-container {
-            backdrop-filter: blur(10px);
-            background-color: rgba(255, 255, 255, 0.85); /* Less transparent white background */
-        }
-        
-        .chatbox::-webkit-scrollbar {
-            width: 8px;
-        }
-        .chatbox::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        .chatbox::-webkit-scrollbar-thumb {
-            background: #a8a8a8;
-            border-radius: 10px;
-        }
-        .chatbox::-webkit-scrollbar-thumb:hover {
-            background: #888;
-        }
-        /* Styles for distinct message boxes */
-        .message.user {
-            @apply bg-blue-500 text-white self-end;
-        }
-        .message.bot {
-            @apply bg-gray-200 text-gray-800 self-start;
+        #chatbox {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
         .message {
-            @apply p-3 rounded-lg max-w-sm mb-3 shadow-md;
+            display: flex;
+            align-items: flex-start;
+            word-wrap: break-word;
         }
-        .loading-dots {
-            @apply flex space-x-1;
+        .message.user {
+            justify-content: flex-end;
         }
-        .loading-dots div {
-            @apply w-2 h-2 bg-gray-500 rounded-full;
-            animation: bounce 0.6s infinite alternate;
+        .message.bot {
+            justify-content: flex-start;
         }
-        .loading-dots div:nth-child(2) {
-            animation-delay: 0.2s;
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+            flex-shrink: 0;
+            background-color: #f0f2f5;
         }
-        .loading-dots div:nth-child(3) {
-            animation-delay: 0.4s;
+        .message.user .avatar {
+            margin-right: 0;
+            margin-left: 10px;
         }
+        .message-content {
+            padding: 12px 18px;
+            border-radius: 20px;
+            max-width: 75%;
+            line-height: 1.5;
+            transition: all 0.3s ease-in-out;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .message.user .message-content {
+            background-color: #007bff;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .message.bot .message-content {
+            background-color: #eaf5ff;
+            color: #333;
+            border-bottom-left-radius: 4px;
+        }
+        .input-container {
+            display: flex;
+            padding: 15px;
+            background-color: #f7f7f7;
+            border-top: 1px solid #e0e0e0;
+            align-items: center;
+            gap: 10px;
+        }
+        #userInput {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-size: 1em;
+            outline: none;
+            resize: none;
+            min-height: 40px;
+            line-height: 1.4;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        #userInput:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            font-size: 1em;
+            flex-shrink: 0;
+        }
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .loading-dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            margin: 0 2px;
+            background-color: #999;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+        .message.bot .loading-dots span { background-color: #666; }
         @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-5px); }
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Suggested Questions */
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px 20px;
+            border-top: 1px solid #e0e0e0;
+            background-color: #f7f7f7;
+        }
+        .suggestion-button {
+            background-color: #e2eafc;
+            color: #333;
+            border: 1px solid #cce0ff;
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .suggestion-button:hover {
+            background-color: #d1e2ff;
+            transform: translateY(-1px);
         }
     </style>
 </head>
-<!-- The 'justify-start' class shifts the chatbox to the left -->
-<body class="flex items-start justify-start min-h-screen p-4">
-
-    <div class="chatbot-container rounded-3xl shadow-2xl w-full max-w-lg h-[90vh] flex flex-col overflow-hidden">
-        
-        <!-- Chatbot Header -->
-        <div class="bg-blue-600 text-white p-5 text-center font-bold text-2xl rounded-t-2xl flex items-center justify-center space-x-2">
-            <!-- Insurance Shield Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8">
-                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.272 6.544a.75.75 0 0 0-1.06 1.06l1.272 1.272a.75.75 0 0 0 1.06-1.06l-1.272-1.272ZM7.279 13.911a.75.75 0 0 0 1.06 1.06l4.272-4.272a.75.75 0 0 0-1.06-1.06l-4.272 4.272ZM10.5 17.25a.75.75 0 0 0 1.5 0v-.75a.75.75 0 0 0-1.5 0v.75ZM12 17.25a.75.75 0 0 0 1.5 0v-.75a.75.75 0 0 0-1.5 0v.75ZM13.5 17.25a.75.75 0 0 0 1.5 0v-.75a.75.75 0 0 0-1.5 0v.75ZM15 17.25a.75.75 0 0 0 1.5 0v-.75a.75.75 0 0 0-1.5 0v.75ZM12 4.5a.75.75 0 0 0-1.5 0v.75a.75.75 0 0 0 1.5 0v-.75Z" clip-rule="evenodd" />
-            </svg>
-            <h1>InsuroChat</h1>
+<body>
+    <div class="container">
+        <header>🛡️ InsuroChat </header>
+        <div id="chatbox"></div>
+        <div class="suggestions" id="suggestions">
+            <button class="suggestion-button" onclick="sendSuggestion('What is a premium?')">Insurance product related?</button>
+            <button class="suggestion-button" onclick="sendSuggestion('How do I file a claim?')">Process related?</button>
+            <button class="suggestion-button" onclick="sendSuggestion('What is covered by my policy?')">Anything else?</button>
         </div>
-
-        <!-- Chat Area -->
-        <div id="chatbox" class="flex-grow p-5 space-y-4 overflow-y-auto chatbox">
-            <div class="message bot">
-                Hello! I'm your virtual insurance assistant. How can I help you today?
-            </div>
+        <div class="input-container">
+            <textarea id="userInput" placeholder="Ask your insurance question..." onkeypress="handleKeyPress(event)"></textarea>
+            <button onclick="sendMessage()">Send</button>
         </div>
-
-        <!-- Input Area -->
-        <div class="p-4 bg-gray-50 border-t border-gray-200 flex items-center space-x-3">
-            <input type="text" id="userInput" class="flex-grow p-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ask your insurance question..." onkeypress="handleKeyPress(event)">
-            <button onclick="sendMessage()" class="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-            </button>
-        </div>
-
     </div>
-
     <script>
-        // Global variables for API key and model endpoint
-        const API_KEY = ""; // Your API key will be provided automatically in the Canvas environment
-        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
-        
-        // Function to send a message to the bot
-        async function sendMessage() {
-            const userInput = document.getElementById("userInput");
+        document.addEventListener('DOMContentLoaded', (event) => {
+            addBotMessage("Hello! I'm your virtual insurance assistant. How can I help you today?");
+        });
+        function addBotMessage(messageText) {
             const chatbox = document.getElementById("chatbox");
-            const userMessage = userInput.value.trim();
-
-            if (!userMessage) return;
-
-            // Display user message
-            const userMessageDiv = document.createElement("div");
-            userMessageDiv.className = "message user"; // This class styles the user's message
-            userMessageDiv.textContent = userMessage;
-            chatbox.appendChild(userMessageDiv);
-
-            // Clear input and show loading indicator
-            userInput.value = "";
-            const loadingDiv = document.createElement("div");
-            loadingDiv.className = "message bot";
-            loadingDiv.innerHTML = `<div class="loading-dots"><div></div><div></div><div></div></div>`;
-            chatbox.appendChild(loadingDiv);
-
-            // Scroll to the latest message
-            chatbox.scrollTop = chatbox.scrollHeight;
-
-            try {
-                // Construct the payload for the Gemini API call
-                const payload = {
-                    contents: [{
-                        parts: [{ text: `You are a helpful and professional insurance chatbot. Respond to the user's question in a concise and friendly manner. User's question: ${userMessage}` }]
-                    }],
-                };
-
-                // Make the API call
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
-                const result = await response.json();
-                
-                // Extract the generated text from the response
-                const botReply = result.candidates?.[0]?.content?.parts?.[0]?.text || "I'm sorry, I couldn't process that. Please try again.";
-
-                // Remove loading indicator
-                chatbox.removeChild(loadingDiv);
-
-                // Display bot's reply
-                const botMessageDiv = document.createElement("div");
-                botMessageDiv.className = "message bot"; // This class styles the bot's message
-                botMessageDiv.textContent = botReply;
-                chatbox.appendChild(botMessageDiv);
-
-            } catch (error) {
-                console.error("API call failed:", error);
-                
-                // Remove loading indicator and show an error message
-                chatbox.removeChild(loadingDiv);
-                const errorDiv = document.createElement("div");
-                errorDiv.className = "message bot";
-                errorDiv.textContent = "Sorry, something went wrong. Please try again later.";
-                chatbox.appendChild(errorDiv);
-            }
-
-            // Scroll to the latest message
+            const botMessageDiv = document.createElement("div");
+            botMessageDiv.className = "message bot";
+            botMessageDiv.innerHTML = `
+                <div class="message-content">${messageText}</div>
+            `;
+            chatbox.appendChild(botMessageDiv);
             chatbox.scrollTop = chatbox.scrollHeight;
         }
-
-        // Allow sending message with the Enter key
+        function sendMessage() {
+            const userInput = document.getElementById("userInput");
+            const chatbox = document.getElementById("chatbox");
+            const input = userInput.value.trim();
+            if (input === "") return;
+            // Add user message to the chatbox
+            const userMessageDiv = document.createElement("div");
+            userMessageDiv.className = "message user";
+            userMessageDiv.innerHTML = `<div class="message-content">${input}</div>`;
+            chatbox.appendChild(userMessageDiv);
+            // Add loading indicator
+            const loadingDiv = document.createElement("div");
+            loadingDiv.className = "message bot loading";
+            loadingDiv.innerHTML = `<div class="message-content loading-dots"><span></span><span></span><span></span></div>`;
+            chatbox.appendChild(loadingDiv);
+            // Scroll to the bottom
+            chatbox.scrollTop = chatbox.scrollHeight;
+            userInput.value = "";
+            userInput.style.height = '40px'; // Reset textarea height
+            fetch("/get", {
+                method: "POST",
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message: input})
+            })
+            .then(res => res.json())
+            .then(data => {
+                // Remove loading indicator
+                chatbox.removeChild(loadingDiv);
+                // Add bot reply to the chatbox
+                addBotMessage(data.reply);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                // Remove loading indicator and show error message
+                chatbox.removeChild(loadingDiv);
+                addBotMessage("Sorry, I'm unable to connect right now. Please try again later.");
+            });
+        }
+        function sendSuggestion(question) {
+            document.getElementById("userInput").value = question;
+            sendMessage();
+        }
+        // Allow sending message with Enter key
         function handleKeyPress(event) {
-            if (event.key === "Enter") {
+            // Check for 'Enter' key without 'Shift'
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
                 sendMessage();
             }
         }
+        document.getElementById('userInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
     </script>
 </body>
 </html>
